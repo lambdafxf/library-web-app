@@ -1,0 +1,12 @@
+{
+    "require": {
+        "php": ">=5.1.0",
+        "yiisoft/yii": "1.1.15"
+    },
+    "autoload": {
+        "psr-0": {
+            "config": "./"
+        }
+    }
+}
+

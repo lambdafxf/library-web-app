@@ -28,7 +28,7 @@ class Book extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('title', 'required', 'message'=>'Введите название'),
+			array('title', 'required'),
 			array('title', 'length', 'min'=>5,'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -36,7 +36,8 @@ class Book extends CActiveRecord
 		);
 	}
 
-	public function beforeSave() {
+	public function beforeSave() 
+	{
 		$this->created = $this->_created;
 		if ($this->isNewRecord)
 			$this->created = new CDbExpression('UNIX_TIMESTAMP()');
@@ -46,7 +47,8 @@ class Book extends CActiveRecord
 		return parent::beforeSave();
 	}
 	
-	public function afterFind() {
+	public function afterFind()
+	{
 		$this->_created = $this->created;
 		$this->_updated = $this->updated;
 		  $this->created = date('H:i:s d.m.Y' , $this->created);
@@ -109,6 +111,10 @@ class Book extends CActiveRecord
 		));
 	}
 	
+	/**
+	 * Получаем список книг, находящихся на руках у читателей, и имеющих не менее трех со-авторов.
+	 * @return CSqlDataProvider
+	 */
 	public function coAuthorship()
 	{
 		$sql_count = 'SELECT COUNT(DISTINCT(rb.book)) as book FROM rb
@@ -129,11 +135,6 @@ class Book extends CActiveRecord
 		
 		$dataProvider=new CSqlDataProvider($sql, array(
 			'totalItemCount'=>$count,
-			'sort'=>array(
-				'attributes'=>array(
-					 'id', 'name', 'updated',
-				),
-			),
 			'pagination'=>array(
 				'pageSize'=>10,
 			),
@@ -141,8 +142,9 @@ class Book extends CActiveRecord
 		
 		return $dataProvider;
 	}
+	
 	/**
-	 * Возвращает случайный набор книг из диапазона $count со случайным смещением
+	 * Возвращает случайный набор книг(5) из диапазона $count со случайным смещением
 	 * Использует prepared statements; 
 	 * при общем числе записей в books меньшем заданого диапазона $count может 
 	 * возвращать пустой объект (не рассматривается в контексте задачи - заполнение из migrate)

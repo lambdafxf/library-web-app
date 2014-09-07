@@ -20,6 +20,7 @@
 	<b><?php echo CHtml::encode($data->getAttributeLabel('updated')); ?>:</b>
 	<?php echo CHtml::encode($data->updated); ?>
 	<br />
-
+	<b><?php echo CHtml::link('Remove', array('popbook', 'id'=>$author_id, 'book'=>$data->id)); ?></b>
+	<br />
 
 </div>

@@ -260,7 +260,8 @@ class m140903_034743_feed_relations extends CDbMigration
 	
 	protected $relations;
 	
-	protected function loadData(){
+	protected function loadData()
+	{
 	
 		$d = 1;
 		
@@ -287,7 +288,8 @@ class m140903_034743_feed_relations extends CDbMigration
 		return (bool)($d%2);
 	}
 	
-	protected function trancateTables(){
+	protected function trancateTables()
+	{
 		$this->truncateTable('authors');
 		$this->truncateTable('books');
 		$this->truncateTable('readers');
@@ -295,7 +297,8 @@ class m140903_034743_feed_relations extends CDbMigration
 		$this->truncateTable('rb');
 	}
 	
-	protected function input_authors($authors){
+	protected function input_authors($authors)
+	{
 		$now = time();
 		for($i=0;$i<count($authors);$i++){
 			$this->insert('authors', array('name'=>$authors[$i], 'created'=>$now, 'updated'=>$now));
@@ -303,35 +306,40 @@ class m140903_034743_feed_relations extends CDbMigration
 		
 	}
 	
-	protected function input_books($books){
+	protected function input_books($books)
+	{
 		$now = time();
 		for($i=0;$i<count($books);$i++){
 			$this->insert('books', array('title'=>$books[$i], 'created'=>$now, 'updated'=>$now));
 		}
 	}
 	
-	protected function input_readers($readers){
+	protected function input_readers($readers)
+	{
 		$now = time();
 		for($i=0;$i<count($readers);$i++){
 			$this->insert('readers', array('name'=>$readers[$i], 'created'=>$now, 'updated'=>$now));
 		}
 	}
 	
-	protected function make_author_rel($relations){
+	protected function make_author_rel($relations)
+	{
 		for($i=0;$i<count($relations);$i++){
 			list($author, $book) = explode('-', $relations[$i]);
 			$this->insert('ab', array('author'=>$author, 'book'=>$book));
 		}
 	}
 	
-	protected function make_reader_rel($relations){
+	protected function make_reader_rel($relations)
+	{
 		for($i=0;$i<count($relations);$i++){
 			list($reader, $book) = explode('-', $relations[$i]);
 			$this->insert('rb', array('reader'=>$reader, 'book'=>$book));
 		}
 	}
 	
-	protected function gen_rel($e_count, $b_count, $m_count, $m_limit){
+	protected function gen_rel($e_count, $b_count, $m_count, $m_limit)
+	{
 		$rel_limit = min($b_count, 100);
 		$ret = array();
 		$m_count = min($m_count,$b_count);

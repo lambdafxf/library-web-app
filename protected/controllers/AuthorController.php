@@ -32,7 +32,7 @@ class AuthorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','popbook'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -79,7 +79,7 @@ class AuthorController extends Controller
 			'model'=>$model,
 		));
 	}
-
+	
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -95,8 +95,9 @@ class AuthorController extends Controller
 		if(isset($_POST['Author']))
 		{
 			$model->attributes=$_POST['Author'];
-			if(isset($_POST['Author']['books']))
-				$model->setRelationRecords('books', $_POST['Author']['books']);
+			if(isset($_POST['Author']['books'])) {
+				$model->setRelationRecords('books', array_merge(array_keys($model->getBooks('id','id')), (array)$_POST['Author']['books']));
+			}
 				
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
@@ -106,7 +107,26 @@ class AuthorController extends Controller
 			'model'=>$model,
 		));
 	}
-
+	
+	/**
+	 * Удаляем книгу из списка книг автора
+	 */
+	public function actionPopbook($id,$book)
+	{
+		$model = Author::withBooks($id,'id','id');
+		
+		$books_ids = array_keys($model->books);
+		$index = array_search($book, $books_ids);
+		
+		if($index !== FALSE){
+			array_splice($books_ids, $index, 1);
+			$model->setRelationRecords('books', $books_ids);
+			$model->save();
+		}
+		
+		$this->redirect(array('view','id'=>$model->id));
+	}
+	
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.

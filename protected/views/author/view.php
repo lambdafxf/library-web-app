@@ -28,6 +28,7 @@ $this->menu=array(
 	),
 )); ?>
 <?php $this->widget('zii.widgets.CListView', array(
+	'viewData'=>array('author_id'=>$model->id),
 	'dataProvider'=>new CArrayDataProvider($model->books),
 	'itemView'=>'_bview',
 )); ?>

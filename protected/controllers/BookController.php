@@ -78,6 +78,7 @@ class BookController extends Controller
 			'model'=>$model,
 		));
 	}
+	
 	/**
 	 * Sphinx-полнотекстовый поиск по книгам для нашего autocomplit'а:
 	 *	добавления книг(автору) при изменении автора
@@ -104,15 +105,17 @@ class BookController extends Controller
 									'together'=>true,
 									'select'=>'id',
 									'index'=>'id'	) 	);
-									
-				if($model == 'author')
+						
+				if($model == 'author') {
 					$model = Author::model()
 											->with(	$withParams )
 											->findByPk($id);
-				else
+				} else {
 					$model = Reader::model()
 											->with(	$withParams )
 											->findByPk($id);
+				}
+				
 				if(!empty($model->books)) {
 					$exc += array_keys($model->books);
 				}

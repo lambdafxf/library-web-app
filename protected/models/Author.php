@@ -28,7 +28,7 @@ class Author extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required', 'message'=>'Заполните имя'),
+			array('name', 'required'),
 			array('name', 'length', 'min'=>5, 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -36,7 +36,8 @@ class Author extends CActiveRecord
 		);
 	}
 	
-	public function beforeSave() {
+	public function beforeSave() 
+	{
 		$this->created = $this->_created;
 		if ($this->isNewRecord)
 			$this->created = new CDbExpression('UNIX_TIMESTAMP()');
@@ -46,7 +47,8 @@ class Author extends CActiveRecord
 		return parent::beforeSave();
 	}
 	
-	public function afterFind() {
+	public function afterFind() 
+	{
 		$this->_created = $this->created;
 		$this->_updated = $this->updated;
 		  $this->created = date('H:i:s d.m.Y' , $this->created);
@@ -67,10 +69,38 @@ class Author extends CActiveRecord
 		);
 	}
 	
-	public function behaviors(){
+	public function behaviors()
+	{
         return array('CSaveRelationsBehavior' => array('class' => 'application.components.CSaveRelationsBehavior'));
 	}
 	
+	protected function _getBooks($author, $select='*', $index=false)
+	{
+		$withParams = array(
+						'together'=>true,
+						'select'=>$select	);
+		if($index) {
+			$withParams['index'] = $index;
+		}
+							
+		if(is_numeric($author)) {
+			$ret = Author::model()->with( array('books'=>$withParams) )->findByPk($author);
+		} else {
+			$ret = $this->books($withParams);
+		}
+		
+		return $ret;
+	}
+	
+	public function getBooks ($select='*', $index=false)
+	{
+		return $this->_getBooks(null, $select, $index);
+	}
+	
+	public function withBooks($id, $select='*', $index=false)
+	{
+		return Author::_getBooks($id, $select, $index);
+	}
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -113,6 +143,10 @@ class Author extends CActiveRecord
 		));
 	}
 	
+	/**
+	 * Получаем список авторов, чьи книги в данный момент читает более трех читателей.
+	 * @return CSqlDataProvider
+	 */
 	public function mostPopular()
 	{
 		$sql_count = 'SELECT COUNT(*) FROM ab
@@ -134,11 +168,6 @@ class Author extends CActiveRecord
 		
 		$dataProvider=new CSqlDataProvider($sql, array(
 			'totalItemCount'=>$count,
-			'sort'=>array(
-				'attributes'=>array(
-					 'id', 'name', 'updated',
-				),
-			),
 			'pagination'=>array(
 				'pageSize'=>10,
 			),

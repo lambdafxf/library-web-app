@@ -28,7 +28,7 @@ class Reader extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, created, updated', 'required'),
+			array('name', 'required'),
 			array('name', 'length', 'min'=>5, 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -48,7 +48,8 @@ class Reader extends CActiveRecord
 		);
 	}
 	
-	public function beforeSave() {
+	public function beforeSave() 
+	{
 		$this->created = $this->_created;
 		if ($this->isNewRecord)
 			$this->created = new CDbExpression('UNIX_TIMESTAMP()');
@@ -58,7 +59,8 @@ class Reader extends CActiveRecord
 		return parent::beforeSave();
 	}
 	
-	public function afterFind() {
+	public function afterFind() 
+	{
 		$this->_created = $this->created;
 		$this->_updated = $this->updated;
 		  $this->created = date('H:i:s d.m.Y' , $this->created);
